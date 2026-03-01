@@ -1,0 +1,100 @@
+{
+  "dataset": "DS01 \u2014 LegitPhish 2025 (deduped)",
+  "source_notebook": "notebook_3_phishvote_result.ipynb",
+  "n_rows_deduped": 31808,
+  "n_rows_train": 25446,
+  "n_rows_test": 6362,
+  "smote_applied": true,
+  "smote_train_size": 39598,
+  "feature_names": [
+    "UsingIP",
+    "LongURL",
+    "ShortURL",
+    "Symbol@",
+    "Redirecting//",
+    "PrefixSuffix-",
+    "SubDomains",
+    "HTTPS",
+    "DomainRegLen",
+    "Favicon",
+    "NonStdPort",
+    "HTTPSDomainURL",
+    "RequestURL",
+    "AnchorURL",
+    "LinksInScriptTags",
+    "AbnormalURL"
+  ],
+  "n_features": 16,
+  "threshold": 0.5,
+  "vote_type": "soft_weighted",
+  "selected_voters": [
+    "Random Forest",
+    "XGBoost",
+    "CatBoost",
+    "LightGBM",
+    "Gradient Boosting"
+  ],
+  "voter_weights": {
+    "Random Forest": 0.2,
+    "XGBoost": 0.1333,
+    "CatBoost": 0.2667,
+    "LightGBM": 0.3333,
+    "Gradient Boosting": 0.0667
+  },
+  "rf_feature_importances": {
+    "UsingIP": 0.082,
+    "LongURL": 0.065,
+    "ShortURL": 0.074,
+    "Symbol@": 0.042,
+    "Redirecting//": 0.038,
+    "PrefixSuffix-": 0.089,
+    "SubDomains": 0.096,
+    "HTTPS": 0.112,
+    "DomainRegLen": 0.075,
+    "Favicon": 0.031,
+    "NonStdPort": 0.028,
+    "HTTPSDomainURL": 0.062,
+    "RequestURL": 0.047,
+    "AnchorURL": 0.043,
+    "LinksInScriptTags": 0.039,
+    "AbnormalURL": 0.077
+  },
+  "phishvote_metrics": {
+    "accuracy": 99.86,
+    "f1": 99.91,
+    "precision": 99.84,
+    "recall": 99.98
+  },
+  "model_metrics": {
+    "Random Forest": {
+      "acc": 99.86,
+      "prec": 99.84,
+      "rec": 99.98,
+      "f1": 99.91
+    },
+    "XGBoost": {
+      "acc": 99.84,
+      "prec": 99.86,
+      "rec": 99.94,
+      "f1": 99.9
+    },
+    "CatBoost": {
+      "acc": 99.87,
+      "prec": 99.92,
+      "rec": 99.92,
+      "f1": 99.92
+    },
+    "LightGBM": {
+      "acc": 99.87,
+      "prec": 99.86,
+      "rec": 99.98,
+      "f1": 99.92
+    },
+    "Gradient Boosting": {
+      "acc": 99.83,
+      "prec": 99.9,
+      "rec": 99.88,
+      "f1": 99.89
+    }
+  }
+}

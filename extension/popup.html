@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PhishVote</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg:        #0b0d14;
+      --surface:   #13161f;
+      --surface2:  #1a1e2b;
+      --surface3:  #212638;
+      --border:    #252a3a;
+      --border2:   #2e3448;
+      --text:      #dde3f0;
+      --text2:     #8b94aa;
+      --text3:     #545e78;
+      --accent:    #4d8ef5;
+      --accent2:   #7fb3ff;
+      --green:     #2ecc71;
+      --yellow:    #f5c842;
+      --orange:    #f39c12;
+      --red:       #e74c3c;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 380px;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 200px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #0f1322 0%, #131826 100%);
+    }
+    .logo-wrap {
+      width: 34px; height: 34px; flex-shrink: 0;
+      background: linear-gradient(135deg, #2563eb, #1d9e56);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      box-shadow: 0 0 14px rgba(37,99,235,0.35);
+    }
+    .header-left h1 {
+      font-size: 14px; font-weight: 700; color: #fff;
+      letter-spacing: 0.3px;
+    }
+    .header-left p { font-size: 9.5px; color: var(--text3); margin-top: 1px; }
+    .header-right { margin-left: auto; }
+
+    /* ── MODEL TOGGLE ── */
+    .toggle-wrap {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+    }
+    .toggle-label {
+      font-size: 8.5px; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 1.2px;
+      margin-bottom: 6px;
+    }
+    .toggle-row { display: flex; gap: 5px; }
+    .toggle-btn {
+      flex: 1;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      border-radius: 6px;
+      padding: 7px 8px;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: left;
+    }
+    .toggle-btn.active {
+      background: #152238;
+      border-color: #3a7bd5;
+      box-shadow: 0 0 0 1px #3a7bd520;
+    }
+    .toggle-btn:hover:not(.active) { border-color: var(--border2); background: #1f2435; }
+    .tb-name {
+      font-size: 11px; font-weight: 700;
+      color: var(--text2);
+      display: block; margin-bottom: 2px;
+    }
+    .toggle-btn.active .tb-name { color: var(--accent2); }
+    .tb-sub { font-size: 9px; color: var(--text3); font-family: var(--mono); }
+
+    /* ── DATASET TOGGLE ── */
+    .ds-toggle {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 7px 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ds-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
+    .ds-chips { display: flex; gap: 5px; flex: 1; }
+    .ds-chip {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 5px; padding: 4px 4px; cursor: pointer;
+      font-size: 9px; font-family: var(--mono); color: var(--text3);
+      text-align: center; transition: all 0.15s;
+    }
+    .ds-chip.active { background: #0f1f10; border-color: #2a7a3a; color: #4ade80; }
+
+    /* ── URL BAR ── */
+    .url-bar {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 7px 14px;
+    }
+    .url-tag { font-size: 8px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+    .url-val {
+      font-family: var(--mono); font-size: 10px; color: #9ba8c0;
+      word-break: break-all; line-height: 1.45;
+      max-height: 32px; overflow: hidden;
+    }
+
+    /* ── RESULT ── */
+    .result-section {
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .risk-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 18px; border-radius: 20px;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.4px;
+      border: 1.5px solid; margin-bottom: 11px;
+      transition: all 0.3s;
+    }
+    .risk-badge.safe       { background:#0d2d1a; border-color:#2ecc71; color:#2ecc71; }
+    .risk-badge.likely-safe{ background:#152710; border-color:#8bc34a; color:#8bc34a; }
+    .risk-badge.suspicious { background:#2a1c00; border-color:#f39c12; color:#f39c12; }
+    .risk-badge.phishing   { background:#2d0808; border-color:#e74c3c; color:#e74c3c; }
+    .risk-badge.high-risk  { background:#380000; border-color:#ff4444; color:#ff6464; }
+
+    .prob-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 9px; margin-bottom: 5px;
+    }
+    .prob-lbl { font-size: 10px; color: var(--text3); }
+    .prob-track {
+      width: 130px; height: 6px;
+      background: var(--surface3); border-radius: 3px; overflow: hidden;
+    }
+    .prob-fill { height: 100%; border-radius: 3px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+    .prob-num  { font-family: var(--mono); font-size: 12px; font-weight: 700; }
+
+    .threshold-row {
+      font-size: 9px; color: var(--text3); margin-top: 4px;
+      font-family: var(--mono);
+    }
+    .threshold-row em { color: var(--accent); font-style: normal; }
+
+    /* ── VOTERS ── */
+    .voters-row {
+      display: flex; gap: 5px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .voter-card {
+      flex: 1; background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px; padding: 6px 5px;
+      text-align: center;
+    }
+    .vc-name { font-size: 9px; font-family: var(--mono); color: var(--text3); margin-bottom: 3px; }
+    .vc-w    { font-size: 8px; color: var(--text3); margin-bottom: 3px; opacity: 0.7; }
+    .vc-prob { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+
+    /* ── FEATURES ── */
+    .feat-section { padding: 8px 14px 10px; }
+    .sect-hdr {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 7px;
+    }
+    .sect-title { font-size: 8.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.1px; }
+    .sect-toggle { font-size: 8.5px; color: var(--accent); cursor: pointer; }
+
+    .feat-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+    .feat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--surface2); border-radius: 5px;
+      padding: 5px 7px; border: 1px solid var(--border);
+    }
+    .feat-name { font-size: 9px; color: var(--text2); }
+    .feat-chip {
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .feat-chip.p { background: #2d0808; color: #ff6b6b; }
+    .feat-chip.l { background: #0a2015; color: #4ade80; }
+    .feat-chip.n { background: var(--surface3); color: var(--text3); }
+
+    /* ── COMPARISON PANEL ── */
+    .compare-section {
+      border-top: 1px solid var(--border);
+      padding: 8px 14px;
+      display: none;
+    }
+    .compare-section.visible { display: block; }
+    .compare-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4px; margin-top: 6px;
+    }
+    .compare-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 7px 8px;
+    }
+    .cc-title { font-size: 8.5px; color: var(--text3); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+    .cc-metric { display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .cc-key { font-size: 9px; color: var(--text3); }
+    .cc-val { font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--accent2); }
+    .cc-winner { border-color: #1d4a2a; background: #0a1f12; }
+
+    /* ── FOOTER ── */
+    .footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 14px; border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .footer-note { font-size: 8.5px; color: var(--text3); font-family: var(--mono); }
+    .rescan-btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white; border: none; border-radius: 5px;
+      padding: 5px 12px; font-size: 10px; font-weight: 600;
+      cursor: pointer; letter-spacing: 0.2px;
+      transition: opacity 0.15s;
+    }
+    .rescan-btn:hover { opacity: 0.85; }
+
+    /* ── LOADING ── */
+    .loading {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 36px; gap: 12px;
+    }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 2.5px solid var(--surface3);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { font-size: 11px; color: var(--text3); }
+
+    .err { padding: 24px; text-align: center; color: var(--red); font-size: 12px; line-height: 1.6; }
+
+    /* ── TRANSITIONS ── */
+    .fade-in { animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .compare-btn {
+      font-size: 8.5px; color: var(--accent); cursor: pointer;
+      background: none; border: none; padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo-wrap">🛡️</div>
+  <div class="header-left">
+    <h1>PhishVote</h1>
+    <p>Adaptive Ensemble · Capstone Research v2.0</p>
+  </div>
+</div>
+
+<!-- Main content (filled by JS) -->
+<div id="root">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Loading models…</p>
+  </div>
+</div>
+
+<script src="engine.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
