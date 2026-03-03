@@ -252,7 +252,10 @@ function renderFeatures(features) {
   return sorted.map(function(e) {
     var key = e[0], val = e[1];
     var label    = FEAT_LABELS[key] || key;
-    var domTag   = DOM_FEATURES.has(key) ? '<span class="feat-src dom">DOM</span>' : '<span class="feat-src url">URL</span>';
+    var domClass = ['AgeofDomain', 'DomainRegLen'].includes(key) ? 'net' : DOM_FEATURES.has(key) ? 'dom' : 'url';
+    var domTag   = domClass === 'net' ? '<span class="feat-src net">NET</span>' :
+                   domClass === 'dom' ? '<span class="feat-src dom">DOM</span>' :
+                   '<span class="feat-src url">URL</span>';
     var dimStyle = val === 0 ? 'opacity:0.42' : '';
     return '<div class="feat-row" style="' + dimStyle + '">' +
       '<span class="feat-name">' + label + domTag + '</span>' +
@@ -431,6 +434,49 @@ function bindEvents() {
   });
 }
 
+// ─── Network feature extraction (RDAP API for WHOIS) ──────────────────────────
+async function getNetworkFeatures(url) {
+  var feats = {};
+  var host;
+  try { host = new URL(url).hostname; } catch(e) { return feats; }
+  
+  // Basic root domain heuristic for RDAP lookups
+  var parts = host.split('.');
+  var root = parts.length > 2 && parts[parts.length-2].length > 3
+             ? parts.slice(-2).join('.')
+             : parts.length > 2 ? parts.slice(-3).join('.') : host;
+
+  try {
+    // Timeout fetch to prevent hanging the network pass if RDAP server is slow
+    var controller = new AbortController();
+    var id = setTimeout(function(){ controller.abort(); }, 3000);
+    var resp = await fetch('https://rdap.org/domain/' + root, { signal: controller.signal });
+    clearTimeout(id);
+    
+    if (resp.ok) {
+      var data = await resp.json();
+      var events = data.events || [];
+      var regEvent = events.find(function(e) { return e.eventAction === 'registration'; });
+      var expEvent = events.find(function(e) { return e.eventAction === 'expiration'; });
+      var now = new Date();
+
+      if (regEvent && regEvent.eventDate) {
+         // Age >= 6 months -> 1 (Safe), else -> -1 (Phish)
+         var ageMonths = (now - new Date(regEvent.eventDate)) / (1000 * 60 * 60 * 24 * 30.44);
+         feats.AgeofDomain = ageMonths >= 6 ? 1 : -1;
+      }
+      if (expEvent && expEvent.eventDate) {
+         // Expires in > 1 year -> 1 (Safe), <= 1 year -> -1 (Phish)
+         var expYears = (new Date(expEvent.eventDate) - now) / (1000 * 60 * 60 * 24 * 365.25);
+         feats.DomainRegLen = expYears > 1 ? 1 : -1;
+      }
+    }
+  } catch(e) {
+    // Ignore fetch errors (CORS, unhandled TLD, or timeout)
+  }
+  return feats;
+}
+
 // ─── Full analysis pipeline ───────────────────────────────────────────────────
 async function analyseTab(tabId) {
   // URL features (synchronous, always available)
@@ -441,12 +487,16 @@ async function analyseTab(tabId) {
   STATE.domFeatures = null;
   render();
 
-  // DOM features (async, injected into the live page)
-  var domFeatures = await getDOMFeatures(tabId);
-  STATE.domFeatures = domFeatures;
+  // DOM features (async, injected into the live page) + Network (RDAP)
+  var domPromise = getDOMFeatures(tabId);
+  var netPromise = getNetworkFeatures(STATE.url);
+  var results = await Promise.all([domPromise, netPromise]);
+  
+  // Merge DOM elements and Network elements into one async object
+  STATE.domFeatures = Object.assign({}, results[0], results[1]);
 
-  // Merge URL + DOM and re-render with complete feature set
-  STATE.features = mergeFeatures(urlFeatures, domFeatures);
+  // Merge URL + Async and re-render with complete feature set
+  STATE.features = mergeFeatures(urlFeatures, STATE.domFeatures);
   render();
 }
 

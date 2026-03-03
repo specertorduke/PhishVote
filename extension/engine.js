@@ -46,11 +46,12 @@ const FEAT_ORDER = [
   'WebsiteTraffic', 'PageRank', 'GoogleIndex', 'LinksPointingToPage', 'StatsReport'
 ];
 
-// Features whose values come from DOM extraction (overriding URL-only placeholders)
+// Features whose values come from DOM/Network extraction (overriding URL-only placeholders)
 const DOM_FEATURES = new Set([
   'Favicon', 'RequestURL', 'AnchorURL', 'LinksInScriptTags', 'ServerFormHandler',
   'InfoEmail', 'WebsiteForwarding', 'StatusBarCust', 'DisableRightClick',
   'UsingPopupWindow', 'IframeRedirection',
+  'AgeofDomain', 'DomainRegLen' // Add RDAP network features
 ]);
 
 // ─── URL-based feature extraction (all 30, 13 fully computed, rest are 0 until DOM merge) ──
@@ -98,8 +99,8 @@ function extractURLFeatures(url) {
     'DisableRightClick':   0,    // DOM → overridden
     'UsingPopupWindow':    0,    // DOM → overridden
     'IframeRedirection':   0,    // DOM → overridden
-    'AgeofDomain':         0,    // WHOIS — cannot compute client-side
-    'DNSRecording':        0,    // DNS lookup — cannot compute client-side
+    'AgeofDomain':         0,    // RDAP network pass → overridden
+    'DNSRecording':        1,    // 1 (Safe) because if the page loaded in the browser, DNS exists
     'WebsiteTraffic':      0,    // External API — not available
     'PageRank':            0,    // Deprecated — not available
     'GoogleIndex':         0,    // Google API — not available
