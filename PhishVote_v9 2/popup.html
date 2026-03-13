@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PhishVote</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg:    #f8fafc;
+  --s1:    #f1f5f9;
+  --s2:    #e2e8f0;
+  --b1:    #cbd5e1;
+  --b2:    #94a3b8;
+  --t1:    #0f172a;
+  --t2:    #475569;
+  --t3:    #94a3b8;
+  --blue:  #1d4ed8;
+  --blue2: #3b82f6;
+  --mono:  'JetBrains Mono', monospace;
+  --sans:  'Inter', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 320px; background: var(--bg); color: var(--t1); font-family: var(--sans); }
+
+/* ── Header ── */
+.hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px 11px;
+  background: #fff;
+  border-bottom: 1px solid var(--s2);
+}
+.logo {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, #1d4ed8, #166534);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(29,78,216,.2);
+}
+.hdr-name { font-size: 13px; font-weight: 700; color: var(--t1); }
+.hdr-sub  { font-size: 8px; color: var(--t3); font-family: var(--mono); margin-top: 1px; }
+.hdr-v    {
+  margin-left: auto; font-family: var(--mono); font-size: 8px; color: var(--t3);
+  background: var(--s1); border: 1px solid var(--s2); padding: 2px 7px; border-radius: 10px;
+}
+
+/* ── Body padding ── */
+.body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+/* ── URL row ── */
+.url-row {
+  background: #fff; border: 1px solid var(--s2); border-radius: 7px;
+  padding: 6px 10px; display: flex; align-items: center; gap: 7px;
+}
+.url-icon { font-size: 11px; flex-shrink: 0; }
+.url-text { font-family: var(--mono); font-size: 8.5px; color: var(--t2); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── DOM status ── */
+.dom-line { font-family: var(--mono); font-size: 7.5px; text-align: center; }
+.dom-line.ok      { color: #16a34a; }
+.dom-line.warn    { color: #d97706; }
+.dom-line.blocked { color: #dc2626; font-weight: 700; }
+
+/* ── Verdict card ── */
+.verdict {
+  border-radius: 10px; padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  border: 1.5px solid;
+}
+.verdict.safe        { background: #f0fdf4; border-color: #86efac; }
+.verdict.likely-safe { background: #f7fee7; border-color: #bef264; }
+.verdict.suspicious  { background: #fff7ed; border-color: #fdba74; }
+.verdict.phishing    { background: #fff1f2; border-color: #fca5a5; }
+.verdict.high-risk   { background: #fef2f2; border-color: #f87171; }
+.verdict.scanning    { background: #eff6ff; border-color: #93c5fd; }
+
+.v-icon  { font-size: 26px; flex-shrink: 0; line-height: 1; }
+.v-level {
+  font-size: 13px; font-weight: 700; letter-spacing: .3px;
+}
+.v-level.safe        { color: #15803d; }
+.v-level.likely-safe { color: #4d7c0f; }
+.v-level.suspicious  { color: #c2410c; }
+.v-level.phishing    { color: #be123c; }
+.v-level.high-risk   { color: #991b1b; }
+.v-level.scanning    { color: #1d4ed8; }
+.v-prob  { font-family: var(--mono); font-size: 8.5px; color: var(--t2); margin-top: 2px; }
+
+/* ── Prob bar ── */
+.bar-section { display: flex; flex-direction: column; gap: 5px; }
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-lbl { font-size: 8px; color: var(--t3); font-family: var(--mono); flex-shrink: 0; width: 50px; }
+.bar-trk { flex: 1; height: 5px; background: var(--s2); border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+.bar-num  { font-family: var(--mono); font-size: 9px; font-weight: 600; width: 28px; text-align: right; flex-shrink: 0; }
+
+/* ── Signal dots ── */
+.dots-wrap  { display: flex; flex-direction: column; gap: 5px; }
+.dots-row   { display: flex; gap: 4px; flex-wrap: wrap; }
+.dot        { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot.p      { background: #ef4444; }
+.dot.s      { background: #22c55e; }
+.dot.n      { background: #cbd5e1; }
+.sig-counts { font-family: var(--mono); font-size: 7.5px; color: var(--t3); }
+.model-line { font-family: var(--mono); font-size: 7px; color: var(--t3); line-height: 1.5; }
+
+/* ── Divider ── */
+.div { height: 1px; background: var(--s2); }
+
+/* ── Buttons ── */
+.actions { display: flex; gap: 7px; }
+.btn-detail {
+  flex: 1; border: none; border-radius: 8px; padding: 9px;
+  font-family: var(--sans); font-size: 10.5px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: opacity .15s;
+}
+.btn-detail:hover { opacity: .88; }
+.btn-detail.alert-style { background: #dc2626; color: #fff; }
+.btn-detail.warn-style  { background: #ea580c; color: #fff; }
+.btn-detail.safe-style  { background: #16a34a; color: #fff; }
+.btn-detail.neutral-style { background: var(--blue); color: #fff; }
+
+.btn-copy {
+  background: #fff; border: 1.5px solid var(--s2); color: var(--t2);
+  border-radius: 8px; padding: 9px 11px;
+  font-family: var(--mono); font-size: 9px; cursor: pointer;
+  display: flex; align-items: center; gap: 4px; white-space: nowrap;
+  transition: border-color .15s;
+}
+.btn-copy:hover { border-color: var(--b2); }
+.btn-copy.copied { border-color: #16a34a; color: #16a34a; }
+
+/* ── History ── */
+.hist-label { font-size: 8px; font-weight: 600; color: var(--t3); text-transform: uppercase; letter-spacing: .8px; font-family: var(--mono); }
+.hist-item  { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--s2); cursor: pointer; }
+.hist-item:last-child { border-bottom: none; }
+.hist-item:hover .hist-url { color: var(--blue); }
+.hist-badge { font-size: 12px; flex-shrink: 0; }
+.hist-url   { font-family: var(--mono); font-size: 8px; color: var(--t2); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hist-time  { font-family: var(--mono); font-size: 7px; color: var(--t3); flex-shrink: 0; }
+
+/* ── Loading ── */
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; gap: 10px; }
+.spinner { width: 22px; height: 22px; border: 2.5px solid var(--s2); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading p { font-family: var(--mono); font-size: 9px; color: var(--t3); }
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="logo">🛡️</div>
+  <div>
+    <div class="hdr-name">PhishVote</div>
+    <div class="hdr-sub">UCI-2015 · 30 features · RF+XGB+CB+LGBM+GB</div>
+  </div>
+  <div class="hdr-v">v7.0</div>
+</div>
+<div id="root">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Loading…</p>
+  </div>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>

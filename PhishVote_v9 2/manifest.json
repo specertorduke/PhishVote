@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "PhishVote",
+  "version": "9.2.0",
+  "description": "Real-time phishing detection using PhishVote ensemble (RF+XGB+CB+LGBM+GB). UCI-2015 \u00b7 30 features.",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://tranco-list.eu/*",
+    "https://www.googleapis.com/*",
+    "https://www.virustotal.com/*",
+    "https://www.whoisxmlapi.com/*",
+    "https://*/*",
+    "https://api.hackertarget.com/*",
+    "http://*/*",
+    "https://openpagerank.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "models/*.json",
+        "detail.html",
+        "engine.js",
+        "data/tranco.json"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "options_page": "options.html"
+}

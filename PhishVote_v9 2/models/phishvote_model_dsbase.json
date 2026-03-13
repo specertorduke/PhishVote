@@ -1,0 +1,128 @@
+{
+  "dataset": "UCI-2015",
+  "feature_names": [
+    "UsingIP",
+    "LongURL",
+    "ShortURL",
+    "Symbol@",
+    "Redirecting//",
+    "PrefixSuffix-",
+    "SubDomains",
+    "HTTPS",
+    "DomainRegLen",
+    "Favicon",
+    "NonStdPort",
+    "HTTPSDomainURL",
+    "RequestURL",
+    "AnchorURL",
+    "LinksInScriptTags",
+    "ServerFormHandler",
+    "InfoEmail",
+    "AbnormalURL",
+    "WebsiteForwarding",
+    "StatusBarCust",
+    "DisableRightClick",
+    "UsingPopupWindow",
+    "IframeRedirection",
+    "AgeofDomain",
+    "DNSRecording",
+    "WebsiteTraffic",
+    "PageRank",
+    "GoogleIndex",
+    "LinksPointingToPage",
+    "StatsReport"
+  ],
+  "n_features": 30,
+  "threshold": 0.5,
+  "vote_type": "soft_weighted",
+  "selected_voters": [
+    "Random Forest",
+    "XGBoost",
+    "CatBoost",
+    "LightGBM",
+    "Gradient Boosting"
+  ],
+  "voter_weights": {
+    "XGBoost": 0.3333,
+    "LightGBM": 0.2667,
+    "CatBoost": 0.2,
+    "Random Forest": 0.1333,
+    "Gradient Boosting": 0.0667
+  },
+  "rf_feature_importances": {
+    "UsingIP": 0.012703,
+    "LongURL": 0.008263,
+    "ShortURL": 0.005587,
+    "Symbol@": 0.004975,
+    "Redirecting//": 0.003463,
+    "PrefixSuffix-": 0.04464,
+    "SubDomains": 0.070195,
+    "HTTPS": 0.31376,
+    "DomainRegLen": 0.016092,
+    "Favicon": 0.004079,
+    "NonStdPort": 0.002365,
+    "HTTPSDomainURL": 0.006114,
+    "RequestURL": 0.01933,
+    "AnchorURL": 0.240951,
+    "LinksInScriptTags": 0.043605,
+    "ServerFormHandler": 0.021422,
+    "InfoEmail": 0.005366,
+    "AbnormalURL": 0.003947,
+    "WebsiteForwarding": 0.00523,
+    "StatusBarCust": 0.002846,
+    "DisableRightClick": 0.001242,
+    "UsingPopupWindow": 0.005047,
+    "IframeRedirection": 0.002272,
+    "AgeofDomain": 0.015435,
+    "DNSRecording": 0.011943,
+    "WebsiteTraffic": 0.081078,
+    "PageRank": 0.011511,
+    "GoogleIndex": 0.012275,
+    "LinksPointingToPage": 0.019603,
+    "StatsReport": 0.00466
+  },
+  "phishvote_metrics": {
+    "accuracy": 97.42,
+    "f1": 97.7,
+    "precision": 97.04,
+    "recall": 98.38
+  },
+  "model_metrics": {
+    "Random Forest": {
+      "acc": 97.38,
+      "prec": 96.96,
+      "rec": 98.38,
+      "f1": 97.66
+    },
+    "XGBoost": {
+      "acc": 97.29,
+      "prec": 96.96,
+      "rec": 98.21,
+      "f1": 97.58
+    },
+    "CatBoost": {
+      "acc": 96.88,
+      "prec": 96.48,
+      "rec": 97.97,
+      "f1": 97.22
+    },
+    "LightGBM": {
+      "acc": 97.38,
+      "prec": 97.11,
+      "rec": 98.21,
+      "f1": 97.66
+    },
+    "Gradient Boosting": {
+      "acc": 96.02,
+      "prec": 95.83,
+      "rec": 97.08,
+      "f1": 96.45
+    },
+    "PhishVote (Soft Voting)": {
+      "acc": 97.42,
+      "prec": 97.04,
+      "rec": 98.38,
+      "f1": 97.7
+    }
+  }
+}

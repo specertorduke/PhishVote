@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PhishVote — API Settings</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #f8fafc; color: #0f172a; min-height: 100vh; padding: 32px 24px; }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .logo-icon { width: 36px; height: 36px; background: #1D4ED8; border-radius: 9px;
+               display: flex; align-items: center; justify-content: center;
+               font-size: 18px; color: #fff; font-weight: 700; }
+  h1 { font-size: 20px; font-weight: 700; color: #0f172a; }
+  h1 span { font-size: 13px; font-weight: 400; color: #64748b; margin-left: 6px; }
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+          padding: 20px; margin-bottom: 16px; }
+  .card-title { font-size: 12px; font-weight: 700; color: #1D4ED8; text-transform: uppercase;
+                letter-spacing: .5px; margin-bottom: 14px; display: flex;
+                align-items: center; gap: 6px; }
+  .field { margin-bottom: 12px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #475569;
+          margin-bottom: 4px; }
+  .meta { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+  .meta a { color: #1D4ED8; text-decoration: none; }
+  input { width: 100%; padding: 8px 11px; border: 1.5px solid #e2e8f0;
+          border-radius: 7px; font-size: 12px; font-family: 'Courier New', monospace;
+          color: #0f172a; background: #f8fafc; outline: none; transition: border .15s; }
+  input:focus { border-color: #1D4ED8; background: #fff; }
+  input::placeholder { color: #cbd5e1; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px;
+          font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .free  { background: #dcfce7; color: #166534; }
+  .nokey { background: #eff6ff; color: #1d4ed8; }
+  .btn { width: 100%; padding: 11px; background: #1D4ED8; color: #fff; border: none;
+         border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+         transition: background .15s; margin-top: 4px; }
+  .btn:hover { background: #1e40af; }
+  .saved { display: none; text-align: center; font-size: 12px; color: #16a34a;
+           margin-top: 10px; font-weight: 600; }
+  .tranco-box { background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px;
+                padding: 12px 14px; font-size: 11px; color: #1e40af; line-height: 1.6; }
+  .tranco-box code { background: #dbeafe; padding: 1px 5px; border-radius: 4px;
+                     font-family: 'Courier New', monospace; font-size: 11px; }
+  .status-row { display: flex; align-items: center; gap: 8px; font-size: 11px;
+                margin-top: 12px; color: #64748b; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; flex-shrink: 0; }
+  .dot.ok { background: #22c55e; }
+  .dot.missing { background: #f97316; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-icon">PV</div>
+    <div>
+      <h1>PhishVote <span>API Settings</span></h1>
+    </div>
+  </div>
+
+  <!-- WHOIS XML -->
+  <div class="card">
+    <div class="card-title">
+      🔍 WHOIS XML API
+      <span class="pill free">Free · 500/month</span>
+    </div>
+    <div class="field">
+      <label>API Key</label>
+      <input type="password" id="whois_key" placeholder="e.g. at_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+      <div class="meta">Sign up free at <a href="https://www.whoisxmlapi.com" target="_blank">whoisxmlapi.com</a>
+        → My Products → API Key</div>
+    </div>
+    <div class="meta" style="color:#475569">
+      Activates: <strong>Domain Age, DNS Record, Registration Length, Abnormal URL</strong>
+    </div>
+  </div>
+
+  <!-- Open PageRank -->
+  <div class="card">
+    <div class="card-title">
+      📊 Open PageRank API
+      <span class="pill free">Free · 1,000/day</span>
+    </div>
+    <div class="field">
+      <label>API Key</label>
+      <input type="password" id="openpagerank_key" placeholder="e.g. 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+      <div class="meta">Sign up free at <a href="https://www.domcop.com/openpagerank" target="_blank">domcop.com/openpagerank</a></div>
+    </div>
+    <div class="meta" style="color:#475569">Activates: <strong>Page Rank</strong></div>
+  </div>
+
+  <!-- Google Custom Search -->
+  <div class="card">
+    <div class="card-title">
+      🌐 Google Custom Search API
+      <span class="pill free">Free · 100/day</span>
+    </div>
+    <div class="field">
+      <label>API Key</label>
+      <input type="password" id="google_cse_key" placeholder="e.g. AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXX">
+      <div class="meta"><a href="https://console.developers.google.com" target="_blank">console.developers.google.com</a>
+        → Enable Custom Search API → Credentials → Create API Key</div>
+    </div>
+    <div class="field">
+      <label>Search Engine ID (cx)</label>
+      <input type="text" id="google_cse_cx" placeholder="e.g. 012345678901234567890:abcdefghijk">
+      <div class="meta"><a href="https://programmablesearchengine.google.com" target="_blank">programmablesearchengine.google.com</a>
+        → Create engine → Control Panel → Search engine ID</div>
+    </div>
+    <div class="meta" style="color:#475569">Activates: <strong>Google Index</strong></div>
+  </div>
+
+  <!-- VirusTotal -->
+  <div class="card">
+    <div class="card-title">
+      🛡️ VirusTotal API
+      <span class="pill free">Free · 500/day</span>
+    </div>
+    <div class="field">
+      <label>API Key</label>
+      <input type="password" id="virustotal_key" placeholder="e.g. 64-character hex string">
+      <div class="meta">Sign up free at <a href="https://www.virustotal.com/gui/join-us" target="_blank">virustotal.com</a>
+        → Profile icon → API Key</div>
+    </div>
+    <div class="meta" style="color:#475569">Activates: <strong>Blacklist / Stats Report</strong></div>
+  </div>
+
+  <!-- Tranco (no key needed) -->
+  <div class="card">
+    <div class="card-title">
+      📈 Tranco Website Traffic
+      <span class="pill nokey">No key needed · Unlimited</span>
+    </div>
+    <div class="tranco-box">
+      Tranco is a local file — no API key, no rate limit, works offline.<br><br>
+      <strong>To activate it:</strong><br>
+      1. Open a terminal and navigate to the <code>PhishVote_v8/data/</code> folder<br>
+      2. Run: <code>python3 build_tranco.py</code><br>
+      3. Wait ~30 seconds for it to download and build <code>tranco.json</code><br>
+      4. Come back to <code>chrome://extensions</code> and click <strong>Reload</strong> on PhishVote<br><br>
+      Activates: <strong>Website Traffic</strong> (8.11% importance — most impactful feature)
+    </div>
+  </div>
+
+  <!-- Key status -->
+  <div class="card">
+    <div class="card-title">📋 Key Status</div>
+    <div id="status_rows"></div>
+  </div>
+
+  <button class="btn" id="save_btn">💾 Save API Keys</button>
+  <div class="saved" id="saved_msg">✅ Keys saved successfully!</div>
+</div>
+
+<script>
+var KEYS = [
+  { id:'whois_key',        store:'pv_whois_key',        label:'WHOIS XML API' },
+  { id:'openpagerank_key', store:'pv_openpagerank_key', label:'Open PageRank' },
+  { id:'google_cse_key',   store:'pv_google_cse_key',   label:'Google CSE Key' },
+  { id:'google_cse_cx',    store:'pv_google_cse_cx',    label:'Google CSE CX' },
+  { id:'virustotal_key',   store:'pv_virustotal_key',   label:'VirusTotal' },
+];
+
+// Load saved keys
+chrome.storage.local.get(KEYS.map(function(k){return k.store;}), function(data) {
+  KEYS.forEach(function(k) {
+    var el = document.getElementById(k.id);
+    if (data[k.store]) el.value = data[k.store];
+  });
+  renderStatus(data);
+});
+
+function renderStatus(data) {
+  var rows = document.getElementById('status_rows');
+  var services = [
+    { label:'WHOIS XML API',          key:'pv_whois_key' },
+    { label:'Open PageRank',          key:'pv_openpagerank_key' },
+    { label:'Google Custom Search',   key:'pv_google_cse_key' },
+    { label:'VirusTotal',             key:'pv_virustotal_key' },
+    { label:'HackerTarget (no key)',  key:null, alwaysOk: true },
+    { label:'Tranco (local file)',    key:null, alwaysOk: true },
+  ];
+  rows.innerHTML = services.map(function(s) {
+    var ok = s.alwaysOk || (s.key && data[s.key]);
+    return '<div class="status-row"><div class="dot '+(ok?'ok':'missing')+'"></div>'+s.label+'</div>';
+  }).join('');
+}
+
+document.getElementById('save_btn').addEventListener('click', function() {
+  var toSave = {};
+  KEYS.forEach(function(k) {
+    var val = document.getElementById(k.id).value.trim();
+    if (val) toSave[k.store] = val;
+  });
+  chrome.storage.local.set(toSave, function() {
+    var msg = document.getElementById('saved_msg');
+    msg.style.display = 'block';
+    chrome.storage.local.get(KEYS.map(function(k){return k.store;}), function(data){
+      renderStatus(data);
+    });
+    setTimeout(function(){ msg.style.display = 'none'; }, 3000);
+  });
+});
+</script>
+</body>
+</html>

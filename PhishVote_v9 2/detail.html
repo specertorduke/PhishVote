@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PhishVote — Analysis Report</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg:    #f8fafc;
+  --s1:    #ffffff;
+  --s2:    #f1f5f9;
+  --s3:    #e2e8f0;
+  --b1:    #cbd5e1;
+  --b2:    #94a3b8;
+  --t1:    #0f172a;
+  --t2:    #475569;
+  --t3:    #94a3b8;
+  --blue:  #1d4ed8;
+  --blue2: #3b82f6;
+  --mono:  'JetBrains Mono', monospace;
+  --sans:  'Inter', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; }
+
+.page { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
+
+/* ── Header ── */
+.hdr { display: flex; align-items: center; gap: 13px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1.5px solid var(--s3); }
+.logo { width: 42px; height: 42px; border-radius: 11px; background: linear-gradient(135deg, #1d4ed8, #166534); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 2px 8px rgba(29,78,216,.2); flex-shrink: 0; }
+.hdr-name { font-size: 17px; font-weight: 800; }
+.hdr-sub  { font-size: 9.5px; color: var(--t3); font-family: var(--mono); margin-top: 2px; }
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.chip { background: var(--s2); border: 1px solid var(--s3); border-radius: 20px; padding: 3px 11px; font-family: var(--mono); font-size: 8.5px; color: var(--blue); }
+.btn { background: var(--s1); border: 1.5px solid var(--s3); color: var(--t2); border-radius: 7px; padding: 5px 12px; font-family: var(--mono); font-size: 9px; cursor: pointer; transition: border-color .15s; }
+.btn:hover { border-color: var(--b2); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.copied { border-color: #16a34a; color: #16a34a; }
+
+/* ── URL box ── */
+.url-box { background: var(--s1); border: 1px solid var(--s3); border-radius: 9px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 9px; }
+.url-lbl  { font-size: 8px; color: var(--t3); text-transform: uppercase; letter-spacing: 1.2px; flex-shrink: 0; padding-top: 2px; font-family: var(--mono); }
+.url-val  { font-family: var(--mono); font-size: 10px; color: var(--blue); word-break: break-all; line-height: 1.65; }
+
+/* ── DOM status ── */
+.dom-bar { font-family: var(--mono); font-size: 8.5px; padding: 5px 12px; border-radius: 7px; margin-bottom: 14px; text-align: center; }
+.dom-bar.ok   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.dom-bar.warn { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+/* ── Hero ── */
+.hero { border-radius: 12px; padding: 20px 22px; margin-bottom: 16px; border: 1.5px solid; display: flex; align-items: center; gap: 16px; }
+.hero.safe        { background: #f0fdf4; border-color: #86efac; }
+.hero.likely-safe { background: #f7fee7; border-color: #bef264; }
+.hero.suspicious  { background: #fff7ed; border-color: #fdba74; }
+.hero.phishing    { background: #fff1f2; border-color: #fca5a5; }
+.hero.high-risk   { background: #fef2f2; border-color: #f87171; }
+.hero-icon  { font-size: 42px; flex-shrink: 0; }
+.hero-level { font-size: 22px; font-weight: 800; }
+.hero-level.safe        { color: #15803d; }
+.hero-level.likely-safe { color: #4d7c0f; }
+.hero-level.suspicious  { color: #c2410c; }
+.hero-level.phishing    { color: #be123c; }
+.hero-level.high-risk   { color: #991b1b; }
+.hero-sub   { font-size: 9.5px; color: var(--t2); font-family: var(--mono); margin-top: 4px; }
+.hero-right { margin-left: auto; text-align: right; flex-shrink: 0; }
+.hero-pct   { font-family: var(--mono); font-size: 30px; font-weight: 700; line-height: 1; }
+.hero-plbl  { font-family: var(--mono); font-size: 7.5px; color: var(--t3); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; }
+
+/* ── 2-col grid ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 14px; }
+@media(max-width: 600px) { .g2 { grid-template-columns: 1fr; } }
+
+/* ── Card ── */
+.card { background: var(--s1); border: 1px solid var(--s3); border-radius: 11px; padding: 16px 18px; }
+.card-title { font-size: 9px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: 1.4px; font-family: var(--mono); margin-bottom: 13px; display: flex; align-items: center; gap: 7px; }
+.card-title::before { content: ''; display: inline-block; width: 3px; height: 10px; background: var(--blue); border-radius: 2px; }
+
+/* ── Signal stats ── */
+.sig3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sig-cell { background: var(--s2); border: 1px solid var(--s3); border-radius: 8px; padding: 10px; text-align: center; }
+.sig-n { font-size: 22px; font-weight: 800; font-family: var(--mono); }
+.sig-n.p { color: #dc2626; } .sig-n.s { color: #16a34a; } .sig-n.n { color: var(--t3); }
+.sig-l { font-size: 7.5px; color: var(--t3); margin-top: 2px; text-transform: uppercase; letter-spacing: .6px; }
+
+/* ── Prob bars ── */
+.pb { margin-bottom: 9px; }
+.pb-row  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.pb-name { font-size: 9.5px; font-weight: 600; color: var(--t2); }
+.pb-pct  { font-family: var(--mono); font-size: 10px; font-weight: 700; }
+.pb-trk  { height: 6px; background: var(--s3); border-radius: 3px; overflow: hidden; }
+.pb-fill { height: 100%; border-radius: 3px; transition: width .8s cubic-bezier(.4,0,.2,1); }
+.pb-note { font-size: 8px; color: var(--t3); font-family: var(--mono); margin-top: 3px; }
+
+/* ── Explain box ── */
+.explain-box { background: var(--s1); border: 1px solid var(--s3); border-left: 3px solid var(--blue); border-radius: 9px; padding: 14px 16px; margin-bottom: 14px; }
+.explain-title { font-family: var(--mono); font-size: 8.5px; color: var(--t3); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.explain-title::before { content: '💡'; font-size: 12px; }
+.explain-body { font-size: 10.5px; color: var(--t2); line-height: 1.75; }
+.explain-body b { color: var(--t1); }
+.explain-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.explain-chip { font-family: var(--mono); font-size: 8px; padding: 2px 8px; border-radius: 5px; }
+.explain-chip.p { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+.explain-chip.s { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+
+/* ── Importance chart ── */
+.imp-chart { display: flex; flex-direction: column; gap: 5px; }
+.imp-row   { display: flex; align-items: center; gap: 8px; }
+.imp-rank  { font-family: var(--mono); font-size: 7.5px; color: var(--t3); width: 18px; text-align: right; flex-shrink: 0; }
+.imp-name  { font-size: 8.5px; color: var(--t2); width: 112px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.imp-trk   { flex: 1; height: 6px; background: var(--s3); border-radius: 3px; overflow: hidden; }
+.imp-fill  { height: 100%; border-radius: 3px; transition: width .5s ease; }
+.imp-pct   { font-family: var(--mono); font-size: 7.5px; color: var(--t3); width: 30px; text-align: right; flex-shrink: 0; }
+.imp-chip2 { font-family: var(--mono); font-size: 7px; padding: 1px 5px; border-radius: 4px; flex-shrink: 0; width: 38px; text-align: center; }
+.imp-chip2.p { background: #fee2e2; color: #dc2626; }
+.imp-chip2.s { background: #dcfce7; color: #16a34a; }
+.imp-chip2.n { background: var(--s2); color: var(--t3); }
+
+/* ── Feature table ── */
+.feat-section { background: var(--s1); border: 1px solid var(--s3); border-radius: 11px; padding: 16px 18px; margin-bottom: 14px; }
+.feat-tabs    { display: flex; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+.ftab { background: var(--s2); border: 1px solid var(--s3); border-radius: 6px; padding: 4px 10px; font-family: var(--mono); font-size: 8px; cursor: pointer; color: var(--t2); transition: all .15s; }
+.ftab:hover  { border-color: var(--b2); }
+.ftab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+.ftab .cnt   { opacity: .7; margin-left: 3px; }
+.feat-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+@media(max-width: 600px) { .feat-grid { grid-template-columns: 1fr; } }
+.feat-row    { display: flex; align-items: center; justify-content: space-between; background: var(--s2); border: 1px solid var(--s3); border-radius: 6px; padding: 5px 8px; transition: opacity .15s; }
+.feat-left   { display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0; }
+.feat-label  { font-size: 8.5px; color: var(--t2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feat-imp    { font-family: var(--mono); font-size: 7px; color: var(--t3); margin-right: 4px; flex-shrink: 0; }
+.src { font-size: 6.5px; font-family: var(--mono); font-weight: 700; padding: 1px 3px; border-radius: 3px; flex-shrink: 0; }
+.src.dom { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+.src.url { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
+.chip { font-family: var(--mono); font-size: 8px; font-weight: 600; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; white-space: nowrap; }
+.chip.p { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+.chip.s { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+.chip.n { background: var(--s2); color: var(--t3); border: 1px solid var(--s3); }
+.no-feats { font-family: var(--mono); font-size: 9px; color: var(--t3); text-align: center; padding: 18px; }
+
+/* ── History ── */
+.hist-item  { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--s3); cursor: pointer; }
+.hist-item:last-child { border-bottom: none; }
+.hist-item:hover .hist-url { color: var(--blue); }
+.hist-badge { font-size: 14px; flex-shrink: 0; }
+.hist-url   { font-family: var(--mono); font-size: 9px; color: var(--t2); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hist-time  { font-family: var(--mono); font-size: 7.5px; color: var(--t3); flex-shrink: 0; }
+
+/* ── Footer ── */
+.footer { text-align: center; color: var(--t3); font-family: var(--mono); font-size: 8px; padding-top: 16px; border-top: 1px solid var(--s3); margin-top: 6px; line-height: 1.8; }
+
+/* ── Loading / error ── */
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 14px; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--s3); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading p { font-family: var(--mono); font-size: 11px; color: var(--t3); }
+.err-box { background: #fff1f2; border: 1px solid #fca5a5; border-radius: 9px; padding: 20px; text-align: center; color: #be123c; font-family: var(--mono); font-size: 10px; line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="logo">🛡️</div>
+    <div>
+      <div class="hdr-name">PhishVote — Analysis Report</div>
+      <div class="hdr-sub">Duhaylungsod & Dumalogdog · University of Mindanao · UCI-2015 · 30 features</div>
+    </div>
+    <div class="hdr-right">
+      <div class="chip">θ=0.5 · 97.42% acc</div>
+      <button class="btn" id="btn-copy-url">📋 Copy URL</button>
+      <button class="btn" id="btn-rescan">⟳ Rescan</button>
+    </div>
+  </div>
+  <div id="root">
+    <div class="loading"><div class="spinner"></div><p>Loading analysis…</p></div>
+  </div>
+</div>
+<script src="engine.js"></script>
+<script src="detail.js"></script>
+</body>
+</html>
