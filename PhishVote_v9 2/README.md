@@ -29,7 +29,7 @@ Every design decision in this extension — which features are evaluated, the im
 
 ## Installation
 
-1. Unzip `PhishVote_v7.zip` to a local folder
+1. Unzip `PhishVote_v9 2.zip` to a local folder
 2. Open Chrome and go to `chrome://extensions`
 3. Enable **Developer mode** (toggle top-right)
 4. Click **Load unpacked** → select the `PhishVote_v7` folder
