@@ -71,6 +71,7 @@ This project is open source. See the LICENSE file for details.
 ## Author
 
 [specertorduke](https://github.com/specertorduke)
+[annekoyya](https://github.com/annekoyya)
 
 ## Support
 
